@@ -44,8 +44,8 @@ namespace pil
         //玩家队伍
         public static int huihes, mode, tmpbuy, tmpche, tmpb, tmpc, maxadd, t_fir;
         //				回合数    操作	购买		购买什么 输入模式	 最大添加数量 是否为第一回合
-        public static int player = 1, bban = 0;
-        //当前回合玩家  是否已添加士员/法术/武器
+        public static int bban = 0;
+        // 是否已添加士员/法术/武器
         public static int[] sxb = new int[MAXPLAY], usefa = new int[MAXPLAY], usewu = new int[MAXPLAY], xbapz = new int[MAXX], fsapz = new int[MAXX], wqapz = new int[MAXX];
         //当前回合玩家 是否首脑死亡     是否使用技能         是否使用武器
         public static xiaobin[] xblist = new xiaobin[MAXX]; //初始士员列表 
@@ -53,6 +53,9 @@ namespace pil
         public static wuqi[] wqlist = new wuqi[MAXX];//初始武器列表 
         public static pfux bback;//按钮事件返回
         public static abc clilin = new abc(0, 0, 0);//点击临时储存
+        public static byte[] get_b = new byte[MAXX];//套接字字节流
+        public static int[] put_i = new int[MAXX];//套接字发送区
+        public static int blong, ilong;//缓冲流长度
 
         public static int[] I1 = new int[] { 0, 5, 5, 0, 5, -5, 3, 4, 10, 5, 5, 2, 0, 10, 10, 5, 0, 10, 10, 5, 5, 0, 0, 5, 1, 5, 5 };//gongji 攻击
         public static int[] I2 = new int[] { 0, 5, 5, 0, 5, 0, 0, 4, 10, 5, 5, 2, 0, 10, 10, 5, 0, 0, 10, 5, 5, 10, 2, 5, 1, 5, 5 };//fanci 反刺
@@ -221,21 +224,9 @@ namespace pil
         }
         public static void useji()
         {
-            //没写好!
             for (int i = 1; i <= MAXP - 1; i++)
             {
-                for (int j = 1; j <= k[player, i]; j++)
-                {
-                    if (vis[player, i, j] != 0)
-                    {
-                        bing[player, i, j].huihe();
-                        bing[player, i, j].lingjcs = bing[player, i, j].gjcishu;
-                    }
-                }
-            }
-            for (int i = 1; i <= MAXP - 1; i++)
-            {
-                for (int j = 1; j <= k[player, i]; j++)
+                for (int j = 1; j <= k[0, i]; j++)
                 {
                     if (vis[0, i, j] != 0)
                     {
@@ -272,13 +263,9 @@ namespace pil
         }
         public static void hui7(int a, int b, int c)
         {//7士员怒气函数 
-            if (player != a)
+            if (bing[a, b, c].tmp == 0)
             {
-                return;
-            }
-            if (bing[a, b, c].tmp[1] == 0)
-            {
-                bing[a, b, c].tmp[1] = 1;
+                bing[a, b, c].tmp = 1;
                 return;
             }
             bing[a, b, c].gongji += 4;
@@ -309,7 +296,7 @@ namespace pil
             }
             if (bing[tmp.a, tmp.b, tmp.c].xue <= 0)
             {
-                System.Windows.MessageBox.Show("受击者为空或者血量不足", "pilgrims");
+                System.Windows.Forms.MessageBox.Show("受击者为空或者血量不足", "pilgrims");
                 return;
             }
             bing[tmp.a, tmp.b, tmp.c].gongji += 5;
@@ -433,7 +420,7 @@ namespace pil
         }
         public static void fa3(int a, int b, int c)
         {//1003法术使用函数 
-            ndian[player] -= 30;
+            ndian[1] -= 30;
             for (int i = 1; i <= MAXP - 1; i++)
             {
                 for (int j = 1; j <= k[0, i]; j++)
@@ -532,7 +519,7 @@ namespace pil
             }
 
             bing[tmp.a, tmp.b, tmp.c].xue -= 1;
-            usefa[player] = 0;
+            usefa[1] = 0;
             isdie(tmp.a, tmp.b, tmp.c);
             clean(fslist[6].name + "使用完毕");
             return;
@@ -802,7 +789,7 @@ namespace pil
         public static int btoi(ref int[] u, byte[] ne, int len)
         {
             int l = 1, i = 1;
-            for (; i <= len; i++)
+            for (; l <= len; i++)
             {
                 u[i] = (int)(ne[l++] | ne[l++] << 8 | ne[l++] << 16 | ne[l++] << 24);
             }
@@ -833,7 +820,7 @@ namespace pil
             b,
             c,
             maxxue;//生命上限 
-        public int[] tmp = new int[common.MAXTMP];//临时数组 
+        public int tmp;//临时数组 
         public string name;//名字 
         public common.pfux yuan, ji, hui;//怨念/上阵/怒气 
         public void Xiaobin(string n, int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10, int i11, int i12, int i13, int i14, int i15, int i16, int i17, common.pfux f1, common.pfux f2, common.pfux f3)
@@ -881,6 +868,7 @@ namespace pil
             dianji = 0;
             bian = 0;
             maxxue = 0;
+            tmp = 0;
             yuan = common.tmpyuan;
             ji = common.tmpji;
             hui = common.tmphui;
@@ -910,6 +898,7 @@ namespace pil
             tmp.yuan = yuan;
             tmp.ji = ji;
             tmp.hui = hui;
+            tmp.tmp = this.tmp;
             return tmp;
         }
         public void yuannian()
