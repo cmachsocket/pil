@@ -24,7 +24,7 @@ namespace pil
         public static xiaobin NULLB = new xiaobin();
         public static xiaobin[,,] bing = new xiaobin[MAXPLAY, MAXP, MAXN];
         //		空士员        场地
-        public static wuqi[] pwuqi = new wuqi[MAXPLAY] { new wuqi(), new wuqi() };
+        public static wuqi[]  pwuqi = new wuqi[MAXPLAY] { new wuqi(), new wuqi() };
         //双方武器槽 
         public static int[,,] vis = new int[MAXPLAY, MAXP, MAXN];
         //是否有士员在此处 
@@ -75,15 +75,15 @@ namespace pil
         public static int[] I16 = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, -20, 21, 22, 23, 24, 25, 26 };//bian 编号
         public static int[] I17 = new int[] { 0, 10, 5, 15, 2, 3, 3, 20, 5, 15, 8, 3, 10, 5, 5, 7, 10, 10, 5, 5, 5, 10, 12, 10, 6, 5, 10 };//maxxue 最大血量
         public static int[] FDI = new int[] { 0, 5, 1, 0, 5, 3, 0, 5 };//法术点数
-        public static int[] FBI = new int[] { 0, 1001, 1002, 1003, 1004, 1005, 1006, 1007 };//法术编号
+        public static int[] FBI = new int[] { 0, 1001, 1002, 1003, 1004, 1005, 1006 };//法术编号
         public static int[] WDI = new int[] { 0, 5, 5 };//武器点数
         public static int[] WBI = new int[] { 0, 2001, 2002 };//武器编号
         public static int[] NAI = new int[] { 0, 2, 2 };   //武器耐久
         public static string[] NAME = new string[] { "\0", "卫兵", "猎手", "重甲", "爆兵", "仁心", "火击", "炼狱", "英灵", "安德拉", "坚石", "忍", "缄默", "执剑人", "狡", "利矛", "清心", "叛军", "破阵", "彼岸", "双生", "禅", "断罪", "诙谐", "突击兵", "亡灵法师", "血月" };
         public static string[] HNAME = new string[] { "\0", "木头", "陈醋", "破损老搞", "BUG精灵", "草草", "肚纸", "地狱木头", "英灵", "吸血鬼", "前锋假豪", "BUG终结者", "重甲破损搞", "细菌", "反木头", "笑天犬", "刘动", "叛军", "破阵", "22", "33", "反抗木头", "破锋反搞", "诙谐", "突击兵", "灵魂召唤师", "血月" };
         //士员名称 
-        public static string[] FNA = new string[] { "\0", "暗杀", "惊扰", "禁忌术", "风暴", "焕发", "背刺", "冻结" };
-        public static string[] HFNA = new string[] { "\0", "火球术", "惊扰", "死亡黎明", "风暴", "焕发", "自残", "冻结" };
+        public static string[] FNA = new string[] { "\0", "暗杀", "惊扰", "禁忌术", "风暴", "焕发", "背刺" };
+        public static string[] HFNA = new string[] { "\0", "火球术", "惊扰", "死亡黎明", "风暴", "焕发", "自残" };
         //法术名称 
         public static string[] WNA = new string[] { "\0", "y12激光步枪", "急救剂" };
         public static string[] HWNA = new string[] { "\0", "战争拳套", "急救剂" };
@@ -228,10 +228,10 @@ namespace pil
             {
                 for (int j = 1; j <= k[0, i]; j++)
                 {
-                    if (vis[0, i, j] != 0)
+                    if (vis[1, i, j] != 0)
                     {
-                        bing[0, i, j].huihe();
-                        bing[0, i, j].lingjcs = bing[0, i, j].gjcishu;
+                        bing[1, i, j].huihe();
+                        bing[1, i, j].lingjcs = bing[0, i, j].gjcishu;
                     }
                 }
             }
@@ -524,23 +524,6 @@ namespace pil
             clean(fslist[6].name + "使用完毕");
             return;
         }
-        public static void fa7(int a, int b, int c)
-        {//1007法术使用函数
-            abc tmp = new abc(a, b, c);
-            if (tmp.a == 0 && tmp.b == 0 && tmp.c == 0)
-            {
-                setmode(3, fa7, "选择被抹消怒气的士员");
-                return;
-            }
-
-            if (bing[tmp.a, tmp.b, tmp.c].xue <= 0)
-            {
-                System.Windows.Forms.MessageBox.Show("受击者为空或者血量不足", "pilgrims");
-                return;
-            }
-
-            bing[tmp.a, tmp.b, tmp.c].hui = tmphui;
-        }
         public static void wu1(int a, int b, int c)
         {//2001武器使用函数 
             abc tmp = new abc(a, b, c);
@@ -608,8 +591,6 @@ namespace pil
                 paip[1, i] = int.Parse(fr.ReadLine());
             }
             fr.Close();
-            //打开各项文件加载资源 
-            //sys();//启动主函数 
             /*
 			re = fopen("rezult.txt", "a");//打开结果文件 
 			time_t curtime;
