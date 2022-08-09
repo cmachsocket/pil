@@ -36,8 +36,8 @@ namespace pil
         //死者编号  死者人数 
         public static string[] p = new string[MAXPLAY], ppai = new string[MAXPLAY];
         //		玩家名称  牌组文件路径
-        public static string tmpapz = "\0", sendtext;
-        //创建牌组名                         回传zhu 
+        public static string tmpapz = "\0", sendtext,fatext;
+        //创建牌组名                         回传zhu    发送text
         public static int[] pxue = new int[MAXPLAY] { 20, 20 }, ndian = new int[MAXPLAY] { 15, 15 };
         //  玩家血量											    玩家点数 
         public static int[,] paip = new int[MAXPLAY, MAXIP];
@@ -123,6 +123,7 @@ namespace pil
             else isdie(aa, bb, cc);
             if (bing[a, b, c].xue > bing[a, b, c].maxxue) bing[a, b, c].xue = bing[a, b, c].maxxue;
             if (bing[aa, bb, cc].xue > bing[aa, bb, cc].maxxue) bing[aa, bb, cc].xue = bing[aa, bb, cc].maxxue;
+            fatext += bing[a, b, c].name + "攻击了" + bing[aa, bb, cc].name + "\n";
             return 1;
         }
         public static void fanci(int a, int b, int c, int aa, int bb, int cc)
@@ -163,7 +164,14 @@ namespace pil
             {//有血返回 
                 return;
             }
+            if (bing[a, b, c].yuan !=tmpyuan)
+            {
+                fatext += bing[a, b, c].name + "释放了怨念\n";
+            }
+            
             bing[a, b, c].yuannian();//释放怨念 
+            
+            fatext += bing[a, b, c].name + "死亡" + "\n";
             dead[++deadk] = bing[a, b, c].bian;
             if (bing[a, b, c].qianfeng != 0)
             {
@@ -204,6 +212,9 @@ namespace pil
             bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].c = k[pl, xblist[bought].paishu];
             //记录下a b c 
             bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].jineng();//释放上阵技能 
+            if(bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].ji != tmpji){
+                fatext += bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].name + "使用了上阵\n";
+            }
             abc tmp = new abc(pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]);
             return tmp;
         }
@@ -213,6 +224,7 @@ namespace pil
             ndian[pl] -= fslist[bought].dianshu;
             usefa[pl] = 1;
             fslist[bought].use();
+            fatext += "购买并使用了" + fslist[bought].name + "\n";
             //do something
         }
         public static void addwq(int bought, int pl)
@@ -220,7 +232,7 @@ namespace pil
             bought -= 2000;
             ndian[pl] -= wqlist[bought].dianshu;
             pwuqi[pl] = wqlist[bought].copy();
-
+            fatext += "购买并使用了" + wqlist[bought].name + "\n";
         }
         public static void useji()
         {
@@ -232,6 +244,7 @@ namespace pil
                     {
                         bing[1, i, j].huihe();
                         bing[1, i, j].lingjcs = bing[0, i, j].gjcishu;
+                        if (bing[1, i, j].hui != tmphui) fatext += bing[1, i, j].name + "使用了怒气\n";
                     }
                 }
             }
