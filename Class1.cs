@@ -1,18 +1,17 @@
-﻿using System.Windows;
-using System.IO;
-
-namespace pil
+﻿namespace pil
 {
     static class common
     {
         public const int MAXPLAY = 2;
         public const int MAXX = 10000;
+        public const int MAXS = 20000;
+        public const int MAXI = 5000;
         public const int MAXTMP = 21;
         public const int MAXC = 1024;
         public const int MAXIP = 21;
         public const int MAXP = 5;
         public const int MAXN = 11;
-        public const string BAN = "3.1.0.20220131";//版本号
+        public const string BAN = "3.2.01.20220815beta";//版本号
         public delegate void pfux(int a, int b, int c);//士员 上阵/怒气/怨念函数  武器使用/法术函数
         public static int inxbk = 26;//士员数量 
         public static int pu_inxbk = 26;//基础士员数量
@@ -24,7 +23,7 @@ namespace pil
         public static xiaobin NULLB = new xiaobin();
         public static xiaobin[,,] bing = new xiaobin[MAXPLAY, MAXP, MAXN];
         //		空士员        场地
-        public static wuqi[]  pwuqi = new wuqi[MAXPLAY] { new wuqi(), new wuqi() };
+        public static wuqi[] pwuqi = new wuqi[MAXPLAY] { new wuqi(), new wuqi() };
         //双方武器槽 
         public static int[,,] vis = new int[MAXPLAY, MAXP, MAXN];
         //是否有士员在此处 
@@ -35,9 +34,9 @@ namespace pil
         public static int deadk = 0;
         //死者编号  死者人数 
         public static string[] p = new string[MAXPLAY], ppai = new string[MAXPLAY];
-        //		玩家名称  牌组文件路径
-        public static string tmpapz = "\0", sendtext,fatext;
-        //创建牌组名                         回传zhu    发送text
+        //		                        玩家名称              牌组文件路径
+        public static string tmpapz = "\0", sendtext="", fatext="", prtext = "";
+        //创建牌组名                         回传zhu    发送text  打印text
         public static int[] pxue = new int[MAXPLAY] { 20, 20 }, ndian = new int[MAXPLAY] { 15, 15 };
         //  玩家血量											    玩家点数 
         public static int[,] paip = new int[MAXPLAY, MAXIP];
@@ -50,11 +49,10 @@ namespace pil
         //当前回合玩家 是否首脑死亡     是否使用技能         是否使用武器
         public static xiaobin[] xblist = new xiaobin[MAXX]; //初始士员列表 
         public static fashu[] fslist = new fashu[MAXX];//初始法术列表 
-        public static wuqi[] wqlist = new wuqi[MAXX];//初始武器列表 
+        public static wuqi[] wqlist = new wuqi[MAXX];//初始武器列表
         public static pfux bback;//按钮事件返回
         public static abc clilin = new abc(0, 0, 0);//点击临时储存
-        public static byte[] get_b = new byte[MAXX];//套接字字节流
-        public static int[] put_i = new int[MAXX];//套接字发送区
+        public static byte[] get_b = new byte[MAXS];//套接字字节流
         public static int blong, ilong;//缓冲流长度
 
         public static int[] I1 = new int[] { 0, 5, 5, 0, 5, -5, 3, 4, 10, 5, 5, 2, 0, 10, 10, 5, 0, 10, 10, 5, 5, 0, 0, 5, 1, 5, 5 };//gongji 攻击
@@ -79,24 +77,24 @@ namespace pil
         public static int[] WDI = new int[] { 0, 5, 5 };//武器点数
         public static int[] WBI = new int[] { 0, 2001, 2002 };//武器编号
         public static int[] NAI = new int[] { 0, 2, 2 };   //武器耐久
-        public static string[] NAME = new string[] { "\0", "卫兵", "猎手", "重甲", "爆兵", "仁心", "火击", "炼狱", "英灵", "安德拉", "坚石", "忍", "缄默", "执剑人", "狡", "利矛", "清心", "叛军", "破阵", "彼岸", "双生", "禅", "断罪", "诙谐", "突击兵", "亡灵法师", "血月" };
-        public static string[] HNAME = new string[] { "\0", "木头", "陈醋", "破损老搞", "BUG精灵", "草草", "肚纸", "地狱木头", "英灵", "吸血鬼", "前锋假豪", "BUG终结者", "重甲破损搞", "细菌", "反木头", "笑天犬", "刘动", "叛军", "破阵", "22", "33", "反抗木头", "破锋反搞", "诙谐", "突击兵", "灵魂召唤师", "血月" };
+        public static string[] NAME = new string[] { "", "卫兵", "猎手", "重甲", "爆兵", "仁心", "火击", "炼狱", "英灵", "安德拉", "坚石", "忍", "缄默", "执剑人", "狡", "利矛", "清心", "叛军", "破阵", "彼岸", "双生", "禅", "断罪", "诙谐", "突击兵", "亡灵法师", "血月" };
+        public static string[] HNAME = new string[] { "", "木头", "陈醋", "破损老搞", "BUG精灵", "草草", "肚纸", "地狱木头", "英灵", "吸血鬼", "前锋假豪", "BUG终结者", "重甲破损搞", "细菌", "反木头", "笑天犬", "刘动", "叛军", "破阵", "22", "33", "反抗木头", "破锋反搞", "诙谐", "突击兵", "灵魂召唤师", "血月" };
         //士员名称 
-        public static string[] FNA = new string[] { "\0", "暗杀", "惊扰", "禁忌术", "风暴", "焕发", "背刺" };
-        public static string[] HFNA = new string[] { "\0", "火球术", "惊扰", "死亡黎明", "风暴", "焕发", "自残" };
+        public static string[] FNA = new string[] { "", "暗杀", "惊扰", "禁忌术", "风暴", "焕发", "背刺" };
+        public static string[] HFNA = new string[] { "", "火球术", "惊扰", "死亡黎明", "风暴", "焕发", "自残" };
         //法术名称 
-        public static string[] WNA = new string[] { "\0", "y12激光步枪", "急救剂" };
-        public static string[] HWNA = new string[] { "\0", "战争拳套", "急救剂" };
+        public static string[] WNA = new string[] { "", "y12激光步枪", "急救剂" };
+        public static string[] HWNA = new string[] { "", "战争拳套", "急救剂" };
         //武器名称 
         public static pfux[] FA = new pfux[] { null, fa1, fa2, fa3, fa4, fa5, fa6 };
         //法术集合 
-        public static pfux[] WU = new pfux[] { null, wu1, wu2 };
+        public static pfux[] WU = new pfux[] { tmpwu, wu1, wu2 };
         //武器集合 
-        public static pfux[] F1 = new pfux[] { null, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, yuan13, tmpyuan, tmpyuan, tmpyuan, yuan17, tmpyuan, yuan19, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan };//yuannian
+        public static pfux[] F1 = new pfux[] { tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, yuan13, tmpyuan, tmpyuan, tmpyuan, yuan17, tmpyuan, yuan19, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan };//yuannian
                                                                                                                                                                                                                                                                                              //怨念法术集合 
-        public static pfux[] F2 = new pfux[] { null, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, ji16, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, ji23, ji24, ji25, tmpji }; //jineng
+        public static pfux[] F2 = new pfux[] { tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, ji16, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, ji23, ji24, ji25, tmpji }; //jineng
                                                                                                                                                                                                                                          //上阵函数集合 
-        public static pfux[] F3 = new pfux[] { null, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, hui7, tmphui, tmphui, tmphui, tmphui, hui12, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, hui26 };//huihe
+        public static pfux[] F3 = new pfux[] { tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, hui7, tmphui, tmphui, tmphui, tmphui, hui12, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, hui26 };//huihe
                                                                                                                                                                                                                                                                   //怒气函数集合 
 
         public static int gongji(int a, int b, int c, int aa, int bb, int cc)
@@ -164,13 +162,13 @@ namespace pil
             {//有血返回 
                 return;
             }
-            if (bing[a, b, c].yuan !=tmpyuan)
+            if (F1[bing[a, b, c].yuan] != tmpyuan)
             {
                 fatext += bing[a, b, c].name + "释放了怨念\n";
             }
-            
+
             bing[a, b, c].yuannian();//释放怨念 
-            
+
             fatext += bing[a, b, c].name + "死亡" + "\n";
             dead[++deadk] = bing[a, b, c].bian;
             if (bing[a, b, c].qianfeng != 0)
@@ -212,7 +210,8 @@ namespace pil
             bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].c = k[pl, xblist[bought].paishu];
             //记录下a b c 
             bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].jineng();//释放上阵技能 
-            if(bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].ji != tmpji){
+            if (F2[bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].ji] != tmpji)
+            {
                 fatext += bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].name + "使用了上阵\n";
             }
             abc tmp = new abc(pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]);
@@ -232,19 +231,19 @@ namespace pil
             bought -= 2000;
             ndian[pl] -= wqlist[bought].dianshu;
             pwuqi[pl] = wqlist[bought].copy();
-            fatext += "购买并使用了" + wqlist[bought].name + "\n";
+            fatext += "购买了" + wqlist[bought].name + "\n";
         }
         public static void useji()
         {
             for (int i = 1; i <= MAXP - 1; i++)
             {
-                for (int j = 1; j <= k[0, i]; j++)
+                for (int j = 1; j <= k[1 , i]; j++)
                 {
                     if (vis[1, i, j] != 0)
                     {
                         bing[1, i, j].huihe();
-                        bing[1, i, j].lingjcs = bing[0, i, j].gjcishu;
-                        if (bing[1, i, j].hui != tmphui) fatext += bing[1, i, j].name + "使用了怒气\n";
+                        bing[1, i, j].lingjcs = bing[1, i, j].gjcishu;
+                        if (F3[bing[1, i, j].hui] != tmphui) fatext += bing[1, i, j].name + "使用了怒气\n";
                     }
                 }
             }
@@ -276,9 +275,9 @@ namespace pil
         }
         public static void hui7(int a, int b, int c)
         {//7士员怒气函数 
-            if (bing[a, b, c].tmp == 0)
+            if (bing[a, b, c].tmp[1] == 0)
             {
-                bing[a, b, c].tmp = 1;
+                bing[a, b, c].tmp[1] = 1;
                 return;
             }
             bing[a, b, c].gongji += 4;
@@ -287,15 +286,15 @@ namespace pil
         }
         public static void hui12(int a, int b, int c)
         {//12士员怒气函数 
-            usefa[~a] = 1;
+            usefa[a ^ 1] = 1;
             return;
         }
         public static void yuan13(int a, int b, int c)
         {//13士员怨念函数 
-            if (bing[~a, 3, 1].xue > 0)
+            if (bing[a ^ 1, 3, 1].xue > 0)
             {
-                bing[~a, 3, 1].xue = 0;
-                isdie(~a, 3, 1);
+                bing[a ^ 1, 3, 1].xue = 0;
+                isdie(a ^ 1, 3, 1);
             }
         }
         public static void ji16(int a, int b, int c)
@@ -309,7 +308,7 @@ namespace pil
             }
             if (bing[tmp.a, tmp.b, tmp.c].xue <= 0)
             {
-                System.Windows.Forms.MessageBox.Show("受击者为空或者血量不足", "pilgrims");
+                prtext = "受击者为空或者血量不足";
                 return;
             }
             bing[tmp.a, tmp.b, tmp.c].gongji += 5;
@@ -329,17 +328,35 @@ namespace pil
         }
         public static void ji23(int a, int b, int c)
         {//23士员上阵函数 
-            System.Windows.Forms.DialogResult dr1 = System.Windows.Forms.MessageBox.Show("1.是与左边血量及上限相等\n2.否与左边攻击及反刺相等", "pilgrims", System.Windows.Forms.MessageBoxButtons.YesNo);
-            if (dr1 == System.Windows.Forms.DialogResult.Yes)
+            abc tmp = new abc(a, b, c);
+            if (clilin.a == 0 && clilin.b == 0 && clilin.c == 0)
             {
+                setmode(3, ji23, "点击第一排:与左边血量及上限相等\n第二排:与左边攻击及反刺相等");
+                clilin.a = 1;
+                return;
+            }
+            if (tmp.c == 1)
+             {
+                return;
+             }
+            if (tmp.b == 1)
+            {
+                
                 bing[a, b, c].xue = bing[a, b, c - 1].xue;
                 bing[a, b, c].maxxue = bing[a, b, c - 1].maxxue;
             }
-            else if (dr1 == System.Windows.Forms.DialogResult.No)
+            else if (tmp.b == 2)
             {
                 bing[a, b, c].gongji = bing[a, b, c - 1].gongji;
                 bing[a, b, c].fanci = bing[a, b, c - 1].fanci;
             }
+            else
+            {
+                prtext = "错误的选择";
+                return;
+            }
+            clean(xblist[23].name + "上阵技能使用完毕");
+            return;
         }
         public static void ji24(int a, int b, int c)
         {//24士员上阵函数
@@ -369,12 +386,12 @@ namespace pil
             }
             if (tmp.b > 2)
             {
-                System.Windows.Forms.MessageBox.Show("被攻击士员大于了2排", "pilgrims");
+                prtext = "被攻击士员大于了2排";
                 return;
             }
             if (bing[tmp.a, tmp.b, tmp.c].xue <= 0)
             {
-                System.Windows.Forms.MessageBox.Show("受击者为空或者血量不足", "pilgrims");
+                prtext = "受击者为空或者血量不足";
                 return;
             }
             if (bing[tmp.a, tmp.b, tmp.c].bihu != 0)
@@ -405,12 +422,12 @@ namespace pil
             }
             if (tmp.b > 2)
             {
-                System.Windows.Forms.MessageBox.Show("被攻击士员大于了2排", "pilgrims");
+                prtext = "被攻击士员大于了2排";
                 return;
             }
             if (bing[tmp.a, tmp.b, tmp.c].xue <= 0)
             {
-                System.Windows.Forms.MessageBox.Show("受击者为空或者血量不足", "pilgrims");
+                prtext = "受击者为空或者血量不足";
                 return;
             }
             if (bing[tmp.a, tmp.b, tmp.c].bihu != 0)
@@ -506,7 +523,7 @@ namespace pil
             }
             if (bing[tmp.a, tmp.b, tmp.c].xue <= 0)
             {
-                System.Windows.Forms.MessageBox.Show("受击者为空或者血量不足", "pilgrims");
+                prtext = "受击者为空或者血量不足";
                 return;
             }
             bing[tmp.a, tmp.b, tmp.c].shecheng++;
@@ -523,12 +540,12 @@ namespace pil
             }
             if (bing[tmp.a, tmp.b, tmp.c].xue <= 0)
             {
-                System.Windows.Forms.MessageBox.Show("受击者为空或者血量不足", "pilgrims");
+                prtext = "受击者为空或者血量不足";
                 return;
             }
             if (tmp.a != 1)
             {
-                System.Windows.Forms.MessageBox.Show("非己方士员", "pilgrims");
+                prtext = "非己方士员";
             }
 
             bing[tmp.a, tmp.b, tmp.c].xue -= 1;
@@ -547,12 +564,12 @@ namespace pil
             }
             if (tmp.b > 2)
             {
-                System.Windows.Forms.MessageBox.Show("被攻击士员大于了2排", "pilgrims");
+                prtext = "被攻击士员大于了2排";
                 return;
             }
             if (bing[tmp.a, tmp.b, tmp.c].xue <= 0)
             {
-                System.Windows.Forms.MessageBox.Show("受击者为空或者血量不足", "pilgrims");
+                prtext = "受击者为空或者血量不足";
                 return;
             }
             if (bing[tmp.a, tmp.b, tmp.c].bihu != 0)
@@ -583,38 +600,13 @@ namespace pil
             }
             if (bing[tmp.a, tmp.b, tmp.c].xue <= 0)
             {
-                System.Windows.Forms.MessageBox.Show("受击者为空或者血量不足", "pilgrims");
+                prtext = "受击者为空或者血量不足";
                 return;
             }
             bing[tmp.a, tmp.b, tmp.c].xue += 5;
             if (bing[tmp.a, tmp.b, tmp.c].xue > bing[tmp.a, tmp.b, tmp.c].maxxue) bing[tmp.a, tmp.b, tmp.c].xue = bing[tmp.a, tmp.b, tmp.c].maxxue;
             clean(wqlist[2].name + "使用完毕");
             return;
-        }
-        public static void init()
-        {
-            //焯(模组
-            initpai();
-            StreamReader sr = new StreamReader("player.txt");
-            ppai[1] = sr.ReadLine();
-            sr.Close();
-            StreamReader fr = new StreamReader(ppai[1]);
-            for (int i = 1; i < MAXIP; i++)
-            {
-                paip[1, i] = int.Parse(fr.ReadLine());
-            }
-            fr.Close();
-            /*
-			re = fopen("rezult.txt", "a");//打开结果文件 
-			time_t curtime;
-			time(&curtime);//获取时间 
-			fprintf(re, "%s%s战胜了%s\n", ctime(&curtime)
-				, pxue[1] <= 0 ? p[0].c_str() : p[1].c_str()
-				, pxue[1] <= 0 ? p[1].c_str() : p[0].c_str());
-			//记录结果 
-			return;
-			}
-			*/
         }
 
 
@@ -626,6 +618,7 @@ namespace pil
             pwuqi[pl].naiju--;
             usewu[pl] = 1;
             isbreak(pl);
+            prtext = "使用了" + pwuqi[pl].name + "\n";
             return 1;
         }
         public static int gjshou(int a, int b, int c, int pl)
@@ -644,17 +637,17 @@ namespace pil
                 {
                     if (a == 0)
                     {
-                        System.Windows.Forms.MessageBox.Show("无法选择对方士员", "pilgrims");
+                        prtext = "无法选择对方士员";
                         return;
                     }
                     if (bing[a, b, c].xue <= 0)
                     {
-                        System.Windows.Forms.MessageBox.Show("攻击者为空或者血量不足", "pilgrims");
+                        prtext = "攻击者为空或者血量不足";
                         return;
                     }
                     if (bing[a, b, c].lingjcs <= 0)
                     {
-                        System.Windows.Forms.MessageBox.Show("已经攻击过了或者没有攻击次数", "pilgrims");
+                        prtext = "已经攻击过了或者没有攻击次数";
                         return;
                     }
                     clilin.a = a; clilin.b = b; clilin.c = c;
@@ -662,7 +655,7 @@ namespace pil
                 }
                 else if (a == -1 || a == -2)
                 {
-                    System.Windows.Forms.MessageBox.Show("无法选择首脑", "pilgirms");
+                    prtext = "无法选择首脑";
                     return;
                 }
                 else if (a == -3)
@@ -670,21 +663,21 @@ namespace pil
 
                     if (pwuqi[1].naiju <= 0)
                     {
-                        System.Windows.Forms.MessageBox.Show("未装备武器", "pilgrims");
+                        prtext = "未装备武器";
                         return;
                     }
 
 
                     if (usewu[1] == 1)
                     {
-                        System.Windows.Forms.MessageBox.Show("本回合已经使用过武器", "pilgrims");
+                        prtext = "本回合已经使用过武器";
                         return;
                     }
                     wquse(1);
                 }
                 else if (a == -4)
                 {
-                    System.Windows.Forms.MessageBox.Show("无法选择对方武器", "pilgrims");
+                    prtext = "无法选择对方武器";
                     return;
                 }
             }
@@ -694,7 +687,7 @@ namespace pil
                 {
                     if (bing[a, b, c].xue <= 0)
                     {
-                        System.Windows.Forms.MessageBox.Show("受攻击者为空或者血量不足", "pilgrims");
+                        prtext = "受攻击者为空或者血量不足";
                         return;
                     }
                     int she = 0;//实际排数
@@ -704,7 +697,7 @@ namespace pil
                     }
                     if (bing[clilin.a, clilin.b, clilin.c].shecheng < she)
                     {
-                        System.Windows.Forms.MessageBox.Show("射程不够", "pilgrims");
+                        prtext = "射程不够";
                         return;
                     }
                     gongji(clilin.a, clilin.b, clilin.c, a, b, c);
@@ -718,7 +711,7 @@ namespace pil
                     {
                         if (k[pl, i] > 0)
                         {
-                            System.Windows.Forms.MessageBox.Show(p[pl] + "仍有士员在场", "pilgrims");
+                            prtext = p[pl] + "仍有士员在场";
                         }
                     }
                     gjshou(clilin.a, clilin.b, clilin.c, pl);
@@ -727,7 +720,7 @@ namespace pil
                 }
                 else if (a == -3 || a == -4)
                 {
-                    System.Windows.Forms.MessageBox.Show("无法选择武器", "pilgrims");
+                    prtext = "无法选择武器";
                     return;
                 }
             }
@@ -742,7 +735,7 @@ namespace pil
             }
             for (int i = 1; i <= inxbk; i++)
             {
-                xblist[i].Xiaobin(NAME[i], I1[i], I2[i], I3[i], I4[i], I5[i], I6[i], I7[i], I8[i], I9[i], I10[i], I11[i], I12[i], I13[i], I14[i], I15[i], I16[i], I17[i], F1[i], F2[i], F3[i]);
+                xblist[i].Xiaobin(NAME[i], I1[i], I2[i], I3[i], I4[i], I5[i], I6[i], I7[i], I8[i], I9[i], I10[i], I11[i], I12[i], I13[i], I14[i], I15[i], I16[i], I17[i], i, i, i);
             }
             for (int i = 1; i <= infsk; i++)
             {
@@ -750,7 +743,7 @@ namespace pil
             }
             for (int i = 1; i <= inwqk; i++)
             {
-                wqlist[i].Wuqi(WNA[i], WU[i], WDI[i], NAI[i], WBI[i]);
+                wqlist[i].Wuqi(WNA[i], i, WDI[i], NAI[i], WBI[i]);
             }
         }
         public static void clean(string s)
@@ -770,7 +763,7 @@ namespace pil
         public static int itob(ref byte[] b, int[] ne, int len)
         {
             int l = 1;
-            for (int i = 1; i <= len; i++)
+            for (int i = 0; i <= len; i++)
             {
                 b[l++] = (byte)(ne[i]);
                 b[l++] = (byte)(ne[i] >> 8);
@@ -782,10 +775,15 @@ namespace pil
         }
         public static int btoi(ref int[] u, byte[] ne, int len)
         {
-            int l = 1, i = 1;
-            for (; l <= len; i++)
+            int l = 1, i = 0;
+            for (; ; i++)
             {
-                u[i] = (int)(ne[l++] | ne[l++] << 8 | ne[l++] << 16 | ne[l++] << 24);
+                int k = 0;
+                for(; k<=24 ; k+=8) {
+                    if (l <= len)
+                        u[i] |= (int)(ne[l++] << k);
+                    else return i;
+                }
             }
             return i;
         }
@@ -813,11 +811,13 @@ namespace pil
             a,
             b,
             c,
-            maxxue;//生命上限 
-        public int tmp;//临时数组 
+            maxxue,
+            yuan,
+            ji,
+            hui;//生命上限 
+        public int[] tmp = new int[10];//临时数组 
         public string name;//名字 
-        public common.pfux yuan, ji, hui;//怨念/上阵/怒气 
-        public void Xiaobin(string n, int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10, int i11, int i12, int i13, int i14, int i15, int i16, int i17, common.pfux f1, common.pfux f2, common.pfux f3)
+        public void Xiaobin(string n, int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10, int i11, int i12, int i13, int i14, int i15, int i16, int i17, int f1, int f2, int f3)
         {
             //加载函数 
             name = n;
@@ -862,10 +862,13 @@ namespace pil
             dianji = 0;
             bian = 0;
             maxxue = 0;
-            tmp = 0;
-            yuan = common.tmpyuan;
-            ji = common.tmpji;
-            hui = common.tmphui;
+            for (int i = 0; i < 10; i++)
+            {
+                tmp[i] = 0;
+            }
+            yuan = 0;
+            ji = 0;
+            hui = 0;
             return;
         }
         public xiaobin copy()
@@ -893,21 +896,24 @@ namespace pil
             tmp.ji = ji;
             tmp.hui = hui;
             tmp.tmp = this.tmp;
+            tmp.a = a;
+            tmp.b = b;
+            tmp.c = c;
             return tmp;
         }
         public void yuannian()
         {//怨念绑定 
-            yuan(a, b, c);
+            common.F1[yuan](a, b, c);
             return;
         }
         public void jineng()
         {// 上阵绑定 
-            ji(a, b, c);
+            common.F2[ji](a, b, c);
             return;
         }
         public void huihe()
         {//怒气绑定 
-            hui(a, b, c);
+            common.F3[hui](a, b, c);
             return;
         }
 
@@ -954,19 +960,20 @@ namespace pil
         public int
             naiju,//耐久 
             dianshu,//点数 
-            bian;//编号 
+            bian,//编号 
+            p;//使用
         public string name;//名字 
-        public common.pfux p;//使用 
+
         public wuqi()
         {//构造函数 
             name = "武器:空";
-            p = common.tmpwu;
+            p = 0;
             dianshu = 0;
             naiju = 0;
             bian = 0;
             return;
         }
-        public void Wuqi(string n, common.pfux tmpp, int d, int na, int b)
+        public void Wuqi(string n, int tmpp, int d, int na, int b)
         {//加载函数 
             name = n;
             p = tmpp;
@@ -976,7 +983,7 @@ namespace pil
         }
         public void use()
         {//使用函数 
-            p(0, 0, 0);
+            common.WU[p](0, 0, 0);
             return;
         }
         public wuqi copy()
