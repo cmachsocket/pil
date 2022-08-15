@@ -11,7 +11,7 @@
         public const int MAXIP = 21;
         public const int MAXP = 5;
         public const int MAXN = 11;
-        public const string BAN = "3.3.2.20220815alpha";//版本号
+        public const string BAN = "3.3.3.20220815alpha";//版本号
         public delegate void pfux(int a, int b, int c);//士员 上阵/怒气/怨念函数  武器使用/法术函数
         public static int inxbk = 26;//士员数量 
         public static int pu_inxbk = 26;//基础士员数量
@@ -58,7 +58,7 @@
         public static int[] I1 = new int[] { 0, 5, 5, 0, 5, -5, 3, 4, 10, 5, 5, 2, 0, 10, 10, 5, 0, 10, 10, 5, 5, 0, 0, 5, 1, 5, 5 };//gongji 攻击
         public static int[] I2 = new int[] { 0, 5, 5, 0, 5, 0, 0, 4, 10, 5, 5, 2, 0, 10, 10, 5, 0, 0, 10, 5, 5, 10, 2, 5, 1, 5, 5 };//fanci 反刺
         public static int[] I3 = new int[] { 0, 10, 5, 15, 2, 3, 3, 20, 5, 15, 7, 3, 10, 5, 5, 7, 10, 10, 5, 5, 5, 10, 12, 10, 6, 5, 10 };//xue 血量
-        public static int[] I4 = new int[] { 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 3, 0, 1, 1, 1, 0, 2, 1, 1, 1, 0, 0, 0, 1, 1, 1 };//gjcishu 攻击次数
+        public static int[] I4 = new int[] { 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 3, 0, 1, 1, 1, 0, 2, 1, 1, 1, 0, 1, 1, 1, 1, 1 };//gjcishu 攻击次数
         public static int[] I5 = new int[] { 0, 1, 2, 1, 1, 3, 3, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };//shecheng 射程
         public static int[] I6 = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };//dun 盾
         public static int[] I7 = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 0, 0 };//lingjcs 临时攻击次数
