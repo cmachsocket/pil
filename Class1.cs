@@ -11,7 +11,7 @@
         public const int MAXIP = 21;
         public const int MAXP = 5;
         public const int MAXN = 11;
-        public const string BAN = "3.2.01.20220815beta";//版本号
+        public const string BAN = "3.3.2.20220815alpha";//版本号
         public delegate void pfux(int a, int b, int c);//士员 上阵/怒气/怨念函数  武器使用/法术函数
         public static int inxbk = 26;//士员数量 
         public static int pu_inxbk = 26;//基础士员数量
@@ -26,7 +26,7 @@
         public static wuqi[] pwuqi = new wuqi[MAXPLAY] { new wuqi(), new wuqi() };
         //双方武器槽 
         public static int[,,] vis = new int[MAXPLAY, MAXP, MAXN];
-        //是否有士员在此处 
+        //是否有士员在此处 可以被bing[,,].bian 完替 按道理是不需要的
         public static int[,] k = new int[MAXPLAY, MAXP];
         //每排的士员数量
         public static int[] kqian = new int[MAXPLAY], dead = new int[MAXX];
@@ -46,7 +46,7 @@
         public static int bban = 0;
         // 是否已添加士员/法术/武器
         public static int[] sxb = new int[MAXPLAY], usefa = new int[MAXPLAY], usewu = new int[MAXPLAY], xbapz = new int[MAXX], fsapz = new int[MAXX], wqapz = new int[MAXX];
-        //当前回合玩家 是否首脑死亡     是否使用技能         是否使用武器
+        //                  当前回合玩家             是否使用技能                 是否使用武器                 创建牌组时是否被选择       左同                   左同
         public static xiaobin[] xblist = new xiaobin[MAXX]; //初始士员列表 
         public static fashu[] fslist = new fashu[MAXX];//初始法术列表 
         public static wuqi[] wqlist = new wuqi[MAXX];//初始武器列表
@@ -58,7 +58,7 @@
         public static int[] I1 = new int[] { 0, 5, 5, 0, 5, -5, 3, 4, 10, 5, 5, 2, 0, 10, 10, 5, 0, 10, 10, 5, 5, 0, 0, 5, 1, 5, 5 };//gongji 攻击
         public static int[] I2 = new int[] { 0, 5, 5, 0, 5, 0, 0, 4, 10, 5, 5, 2, 0, 10, 10, 5, 0, 0, 10, 5, 5, 10, 2, 5, 1, 5, 5 };//fanci 反刺
         public static int[] I3 = new int[] { 0, 10, 5, 15, 2, 3, 3, 20, 5, 15, 7, 3, 10, 5, 5, 7, 10, 10, 5, 5, 5, 10, 12, 10, 6, 5, 10 };//xue 血量
-        public static int[] I4 = new int[] { 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 3, 0, 1, 1, 1, 0, 2, 1, 1, 5, 0, 0, 0, 1, 1, 1 };//gjcishu 攻击次数
+        public static int[] I4 = new int[] { 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 3, 0, 1, 1, 1, 0, 2, 1, 1, 1, 0, 0, 0, 1, 1, 1 };//gjcishu 攻击次数
         public static int[] I5 = new int[] { 0, 1, 2, 1, 1, 3, 3, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };//shecheng 射程
         public static int[] I6 = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };//dun 盾
         public static int[] I7 = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 0, 0 };//lingjcs 临时攻击次数
@@ -201,7 +201,7 @@
             return;
         }
         public static abc addxb(int bought, int pl)
-        {//增加士员 
+        {//增加士员
             bing[pl, xblist[bought].paishu, ++k[pl, xblist[bought].paishu]] = xblist[bought].copy();//赋值上场 
             vis[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]] = 1; //确认有士员才此 
             if (xblist[bought].qianfeng != 0) kqian[pl]++;//前锋士员总数增加 
@@ -210,11 +210,13 @@
             bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].c = k[pl, xblist[bought].paishu];
             //记录下a b c 
             bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].jineng();//释放上阵技能 
+            fatext += "购买了" + bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].name+"\n";
             if (F2[bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].ji] != tmpji)
             {
                 fatext += bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].name + "使用了上阵\n";
             }
             abc tmp = new abc(pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]);
+            
             return tmp;
         }
         public static void addfs(int bought, int pl)
