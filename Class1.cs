@@ -11,7 +11,7 @@
         public const int MAXIP = 21;
         public const int MAXP = 5;
         public const int MAXN = 11;
-        public const string BAN = "3.3.3.20220815alpha";//版本号
+        public const string BAN = "3.3.4.20220815alpha";//版本号
         public delegate void pfux(int a, int b, int c);//士员 上阵/怒气/怨念函数  武器使用/法术函数
         public static int inxbk = 26;//士员数量 
         public static int pu_inxbk = 26;//基础士员数量
@@ -20,19 +20,19 @@
         public static wuqi NULLW = new wuqi();
         //空武器 
         public static fashu NULLF = new fashu();
+        //空法术
         public static xiaobin NULLB = new xiaobin();
+        //空士员
         public static xiaobin[,,] bing = new xiaobin[MAXPLAY, MAXP, MAXN];
-        //		空士员        场地
+        //		         场地
         public static wuqi[] pwuqi = new wuqi[MAXPLAY] { new wuqi(), new wuqi() };
         //双方武器槽 
-        public static int[,,] vis = new int[MAXPLAY, MAXP, MAXN];
-        //是否有士员在此处 可以被bing[,,].bian 完替 按道理是不需要的
         public static int[,] k = new int[MAXPLAY, MAXP];
         //每排的士员数量
-        public static int[] kqian = new int[MAXPLAY], dead = new int[MAXX];
-        //每排的士员数量		                       前锋数量 				
-        public static int deadk = 0;
-        //死者编号  死者人数 
+        public static int[] kqian = new int[MAXPLAY];
+        //前锋数量
+        public static int dead ;
+        //	               死者
         public static string[] p = new string[MAXPLAY], ppai = new string[MAXPLAY];
         //		                        玩家名称              牌组文件路径
         public static string tmpapz = "\0", sendtext="", fatext="", prtext = "";
@@ -41,19 +41,16 @@
         //  玩家血量											    玩家点数 
         public static int[,] paip = new int[MAXPLAY, MAXIP];
         //玩家队伍
-        public static int huihes, mode, tmpbuy, tmpche, tmpb, tmpc, maxadd, t_fir;
-        //				回合数    操作	购买		购买什么 输入模式	 最大添加数量 是否为第一回合
-        public static int bban = 0;
-        // 是否已添加士员/法术/武器
-        public static int[] sxb = new int[MAXPLAY], usefa = new int[MAXPLAY], usewu = new int[MAXPLAY], xbapz = new int[MAXX], fsapz = new int[MAXX], wqapz = new int[MAXX];
-        //                  当前回合玩家             是否使用技能                 是否使用武器                 创建牌组时是否被选择       左同                   左同
+        public static int huihes, mode,  maxadd, t_fir;
+        //				回合数    操作   最大添加数量 是否为第一回合
+        public static int[]  usefa = new int[MAXPLAY], usewu = new int[MAXPLAY], xbapz = new int[MAXX], fsapz = new int[MAXX], wqapz = new int[MAXX];
+        //                    是否使用技能                 是否使用武器                 创建牌组时是否被选择       左同                   左同
         public static xiaobin[] xblist = new xiaobin[MAXX]; //初始士员列表 
         public static fashu[] fslist = new fashu[MAXX];//初始法术列表 
         public static wuqi[] wqlist = new wuqi[MAXX];//初始武器列表
-        public static pfux bback;//按钮事件返回
+        public static pfux bback;//事件绑定
         public static abc clilin = new abc(0, 0, 0);//点击临时储存
         public static byte[] get_b = new byte[MAXS];//套接字字节流
-        public static int blong, ilong;//缓冲流长度
 
         public static int[] I1 = new int[] { 0, 5, 5, 0, 5, -5, 3, 4, 10, 5, 5, 2, 0, 10, 10, 5, 0, 10, 10, 5, 5, 0, 0, 5, 1, 5, 5 };//gongji 攻击
         public static int[] I2 = new int[] { 0, 5, 5, 0, 5, 0, 0, 4, 10, 5, 5, 2, 0, 10, 10, 5, 0, 0, 10, 5, 5, 10, 2, 5, 1, 5, 5 };//fanci 反刺
@@ -129,7 +126,7 @@
             int she = 0;
             for (int i = 1; i <= b; i++)
             {
-                if (vis[a, i, c] != 0) she++;
+                if (bing[a, i, c].bian != 0) she++;
             }
             if (bing[aa, bb, cc].shecheng < she)
             {
@@ -170,22 +167,19 @@
             bing[a, b, c].yuannian();//释放怨念 
 
             fatext += bing[a, b, c].name + "死亡" + "\n";
-            dead[++deadk] = bing[a, b, c].bian;
+            dead = bing[a, b, c].bian;
             if (bing[a, b, c].qianfeng != 0)
             {
                 kqian[a]--;
             }
             bing[a, b, c] = NULLB.copy();
-            vis[a, b, c] = 0;
             for (int i = c + 1; i <= k[a, b]; i++)
             {//存者向左移动 
-                if (vis[a, b, i] != 0)
+                if (bing[a, b, i].bian != 0)
                 {
                     bing[a, b, i - 1] = bing[a, b, i].copy();
-                    vis[a, b, i - 1] = 1;
                     bing[a, b, i - 1].c = i - 1;
                     bing[a, b, i] = NULLB.copy();
-                    vis[a, b, i] = 0;
                 }
             }
             k[a, b]--;
@@ -203,7 +197,6 @@
         public static abc addxb(int bought, int pl)
         {//增加士员
             bing[pl, xblist[bought].paishu, ++k[pl, xblist[bought].paishu]] = xblist[bought].copy();//赋值上场 
-            vis[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]] = 1; //确认有士员才此 
             if (xblist[bought].qianfeng != 0) kqian[pl]++;//前锋士员总数增加 
             bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].a = pl;
             bing[pl, xblist[bought].paishu, k[pl, xblist[bought].paishu]].b = xblist[bought].paishu;
@@ -226,7 +219,6 @@
             usefa[pl] = 1;
             fslist[bought].use();
             fatext += "购买并使用了" + fslist[bought].name + "\n";
-            //do something
         }
         public static void addwq(int bought, int pl)
         {
@@ -241,7 +233,7 @@
             {
                 for (int j = 1; j <= k[1 , i]; j++)
                 {
-                    if (vis[1, i, j] != 0)
+                    if (bing[1, i, j].bian != 0)
                     {
                         bing[1, i, j].huihe();
                         bing[1, i, j].lingjcs = bing[1, i, j].gjcishu;
@@ -321,7 +313,6 @@
         public static void yuan17(int a, int b, int c)
         {//17士员怨念函数 
             pxue[a] -= 3;
-            if (pxue[a] <= 0) sxb[a] = 1;
         }
         public static void yuan19(int a, int b, int c)
         {//19士员怨念函数 
@@ -366,10 +357,9 @@
         }
         public static void ji25(int a, int b, int c)
         {//25士员上阵函数
-            if (deadk <= 0) return;
-            abc tmp = addxb(dead[deadk], a);
+            if (dead == 0) return;
+            abc tmp = addxb(dead, a);
             bing[tmp.a, tmp.b, tmp.c].xue = 1;
-            deadk--;
         }
         public static void hui26(int a, int b, int c)
         {//26士员怒气函数
@@ -457,7 +447,7 @@
             {
                 for (int j = 1; j <= k[0, i]; j++)
                 {
-                    if (vis[0, i, j] != 0)
+                    if (bing[0, i, j].bian != 0)
                     {
                         bing[0, i, j].xue = -1000;
                         //isdie(0, i, j);
@@ -468,7 +458,7 @@
             {
                 for (int j = 1; j <= k[1, i]; j++)
                 {
-                    if (vis[1, i, j] != 0)
+                    if (bing[1, i, j].bian != 0)
                     {
                         bing[1, i, j].xue = -1000;
                         //isdie(1, i, j);
@@ -481,7 +471,7 @@
                 {
                     for (int j = 1; j <= MAXN; j++)
                     {
-                        if (vis[k, i, 1] != 0)
+                        if (bing[k, i, 1].bian != 0)
                         {
                             isdie(k, i, 1);
                         }
@@ -496,7 +486,7 @@
             {
                 for (int j = k[0, i]; j >= 1; j--)
                 {
-                    if (vis[0, i, j] != 0)
+                    if (bing[0, i, j].bian != 0)
                     {
                         bing[0, i, j].xue -= 1;
                         isdie(0, i, j);
@@ -507,7 +497,7 @@
             {
                 for (int j = k[1, i]; j >= 1; j--)
                 {
-                    if (vis[1, i, j] != 0)
+                    if (bing[1, i, j].bian != 0)
                     {
                         bing[1, i, j].xue -= 1;
                         isdie(1, i, j);
@@ -628,7 +618,6 @@
             pxue[pl] -= bing[a, b, c].gongji;
             bing[a, b, c].xue = 0;
             isdie(a, b, c);
-            if (pxue[pl] <= 0) sxb[pl] = 1;
             return 1;
         }
         public static void gj1(int a, int b, int c)
@@ -692,10 +681,18 @@
                         prtext = "受攻击者为空或者血量不足";
                         return;
                     }
+                    if (kqian[a] > 0)
+                    {
+                        if (bing[a, b, c].qianfeng == 0)
+                        {
+                            prtext = "先攻击前锋对象";
+                            return;
+                        }
+                    }
                     int she = 0;//实际排数
                     for (int i = 1; i <= b; i++)
                     {
-                        if (vis[a, i, c] != 0) she++;
+                        if (bing[a, i, c].bian != 0) she++;
                     }
                     if (bing[clilin.a, clilin.b, clilin.c].shecheng < she)
                     {
