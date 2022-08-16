@@ -11,7 +11,7 @@
         public const int MAXIP = 21;
         public const int MAXP = 5;
         public const int MAXN = 11;
-        public const string BAN = "3.3.4.20220815alpha";//版本号
+        public const string BAN = "3.3.5.20220816alpha";//版本号
         public delegate void pfux(int a, int b, int c);//士员 上阵/怒气/怨念函数  武器使用/法术函数
         public static int inxbk = 26;//士员数量 
         public static int pu_inxbk = 26;//基础士员数量
