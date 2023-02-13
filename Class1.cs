@@ -1,4 +1,7 @@
-﻿namespace pil
+﻿using System.Collections.Generic;
+using System.Windows.Interop;
+
+namespace pil
 {
     static class common
     {
@@ -50,7 +53,6 @@
         public static wuqi[] wqlist = new wuqi[MAXX];//初始武器列表
         public static pfux bback;//事件绑定
         public static abc clilin = new abc(0, 0, 0);//点击临时储存
-        public static byte[] get_b = new byte[MAXS];//套接字字节流
 
         public static int[] I1 = new int[] { 0, 5, 5, 0, 5, -5, 3, 4, 10, 5, 5, 2, 0, 10, 10, 5, 0, 10, 10, 5, 5, 0, 0, 5, 1, 5, 5 };//gongji 攻击
         public static int[] I2 = new int[] { 0, 5, 5, 0, 5, 0, 0, 4, 10, 5, 5, 2, 0, 10, 10, 5, 0, 0, 10, 5, 5, 10, 2, 5, 1, 5, 5 };//fanci 反刺
@@ -88,12 +90,12 @@
         public static pfux[] WU = new pfux[] { tmpwu, wu1, wu2 };
         //武器集合 
         public static pfux[] F1 = new pfux[] { tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, yuan13, tmpyuan, tmpyuan, tmpyuan, yuan17, tmpyuan, yuan19, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan, tmpyuan };//yuannian
-                                                                                                                                                                                                                                                                                             //怨念法术集合 
+        //怨念法术集合 
         public static pfux[] F2 = new pfux[] { tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, ji16, tmpji, tmpji, tmpji, tmpji, tmpji, tmpji, ji23, ji24, ji25, tmpji }; //jineng
-                                                                                                                                                                                                                                         //上阵函数集合 
+        //上阵函数集合 
         public static pfux[] F3 = new pfux[] { tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, hui7, tmphui, tmphui, tmphui, tmphui, hui12, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, tmphui, hui26 };//huihe
-                                                                                                                                                                                                                                                                  //怒气函数集合 
-
+        //怒气函数集合 
+        
         public static int gongji(int a, int b, int c, int aa, int bb, int cc)
         {//攻击函数 
             if (bing[aa, bb, cc].bihu != 0)
@@ -744,6 +746,7 @@
             {
                 wqlist[i].Wuqi(WNA[i], i, WDI[i], NAI[i], WBI[i]);
             }
+            
         }
         public static void clean(string s)
         {
@@ -759,32 +762,22 @@
             mode = mo;
             sendtext = s;
         }
-        public static int itob(ref byte[] b, int[] ne, int len)
+        public static string tostr(int[] tmp)//int[]转string,从0开始
         {
-            int l = 1;
-            for (int i = 0; i <= len; i++)
+            string s = "";
+            for (int i = 0; i < tmp.Length; i++)
             {
-                b[l++] = (byte)(ne[i]);
-                b[l++] = (byte)(ne[i] >> 8);
-                b[l++] = (byte)(ne[i] >> 16);
-                b[l++] = (byte)(ne[i] >> 24);
+                s += tmp[i].ToString()+"\n";
             }
-            return l;
-
+            return s;
         }
-        public static int btoi(ref int[] u, byte[] ne, int len)
+        public static void toint(string s,ref int[] tmp)//string转int[],从0开始
         {
-            int l = 1, i = 0;
-            for (; ; i++)
+            string[] ss = s.Split('\n');
+            for(int i = 0; i < ss.Length-1; i++)
             {
-                int k = 0;
-                for(; k<=24 ; k+=8) {
-                    if (l <= len)
-                        u[i] |= (int)(ne[l++] << k);
-                    else return i;
-                }
+                 int.TryParse(ss[i],out tmp[i]);
             }
-            return i;
         }
     }
 
@@ -810,10 +803,10 @@
             a,
             b,
             c,
-            maxxue,
-            yuan,
-            ji,
-            hui;//生命上限 
+            maxxue,//血量上限
+            yuan,//怨念
+            ji,//上阵
+            hui;//怒气 
         public int[] tmp = new int[10];//临时数组 
         public string name;//名字 
         public void Xiaobin(string n, int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10, int i11, int i12, int i13, int i14, int i15, int i16, int i17, int f1, int f2, int f3)
