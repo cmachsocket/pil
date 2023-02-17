@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows.Interop;
-
+﻿
 namespace pil
 {
     static class common
@@ -14,7 +12,7 @@ namespace pil
         public const int MAXIP = 21;
         public const int MAXP = 5;
         public const int MAXN = 11;
-        public const string BAN = "3.3.5.20220816alpha";//版本号
+        public const string BAN = "3.4.0.20230218alpha";//版本号
         public delegate void pfux(int a, int b, int c);//士员 上阵/怒气/怨念函数  武器使用/法术函数
         public static int inxbk = 26;//士员数量 
         public static int pu_inxbk = 26;//基础士员数量
@@ -45,7 +43,13 @@ namespace pil
         public static int[,] paip = new int[MAXPLAY, MAXIP];
         //玩家队伍
         public static int huihes, mode,  maxadd, t_fir;
-        //				回合数    操作   最大添加数量 是否为第一回合
+        //				回合数    操作   最大添加数量 是否为先手
+        //mode 0 对方回合
+        //mode 1 空闲中
+        //mode 2 选择攻击
+        //mode 3 选择技能
+        //t_fir 1 先手
+        //t_fir 0 后手
         public static int[]  usefa = new int[MAXPLAY], usewu = new int[MAXPLAY], xbapz = new int[MAXX], fsapz = new int[MAXX], wqapz = new int[MAXX];
         //                    是否使用技能                 是否使用武器                 创建牌组时是否被选择       左同                   左同
         public static xiaobin[] xblist = new xiaobin[MAXX]; //初始士员列表 
