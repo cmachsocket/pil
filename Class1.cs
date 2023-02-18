@@ -12,7 +12,7 @@ namespace pil
         public const int MAXIP = 21;
         public const int MAXP = 5;
         public const int MAXN = 11;
-        public const string BAN = "3.4.0.20230218alpha";//版本号
+        public const string BAN = "3.4.1.20230218";//版本号
         public delegate void pfux(int a, int b, int c);//士员 上阵/怒气/怨念函数  武器使用/法术函数
         public static int inxbk = 26;//士员数量 
         public static int pu_inxbk = 26;//基础士员数量
@@ -533,7 +533,7 @@ namespace pil
             abc tmp = new abc(a, b, c);
             if (tmp.a == 0 && tmp.b == 0 && tmp.c == 0)
             {
-                setmode(3, fa6, "选择被增加射程的士员");
+                setmode(3, fa6, "选择背刺的士员");
                 return;
             }
             if (bing[tmp.a, tmp.b, tmp.c].xue <= 0)
